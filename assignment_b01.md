@@ -184,7 +184,7 @@ seen in `?lung` and `glimpse()` above, the categorical variable
 corresponds to a status category.
 
 ``` r
-# Example that counts the instances of status category '1' (censored) by sex: 
+# Example that counts the instances of status category '2' (dead) by sex: 
 summarize_category_count(data = lung, group_var = sex, cat_var = status, cat = 2) 
 ```
 
@@ -376,4 +376,4 @@ test_that("Testing category summarization function", {
     ## 1     1     2
     ## 2     2     0
     ## 3    NA     0
-    ## Test passed 🥳
+    ## Test passed 🌈

@@ -110,7 +110,7 @@ summarize_category_count(data = lung, group_var = sex, cat_var = ph.ecog, cat = 
 For the group variable, `sex` is either 1 (Male) or 2 (Female).
 For the category variable input, the `status` can be 1 (censored) or 2(dead). As seen in `?lung` and `glimpse()` above, the categorical variable (`status`) is an integer numeric (`dbl`subtype) class, where each number corresponds to a status category. 
 ``` {r}
-# Example that counts the instances of status category '1' (censored) by sex: 
+# Example that counts the instances of status category '2' (dead) by sex: 
 summarize_category_count(data = lung, group_var = sex, cat_var = status, cat = 2) 
 
 ```
