@@ -1,0 +1,220 @@
+---
+title: "Assignment B1 - Andrea Wong Koo"
+output: github_document
+date: "2024-10-29"
+---
+
+``` {r}
+
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(testthat)
+
+#Data packages for examples and tests:
+library(survival)
+library(palmerpenguins)
+```
+
+
+# Exercise 1: Make a Function and Exercise 2: Document your Function
+
+_Extra coding explanations:_ `deparse(substitute())` was used to convert variable name into character string for verifying data class.
+
+``` {r}
+
+#' Title: Summarize Category Instances
+#' This function counts instances of a specific category within a categorical variable, grouped by a group variable. It supports both factor and discrete numeric variable types, and displays the results in a summary table. 
+#' 
+#' @param data An input data frame containing the variables to analyze.
+#' @param group_var The grouping variable to summarize counts by. Named this way to clarify its role in grouping.
+#' @param cat_var The categorical variable of interest. This name is a concise reference to "category variable".
+#' @param cat The specific category value to be counted. This parameter directly refers to the target category.
+#' @param na.rm A reusable variable indicating whether to ignore NA values in the data. Defined globally to allow flexibility in handling missing values, while reducing redundancy.
+#' @param .groups A reusable variable to control the behavior of grouping (e.g., "drop"), as in `dplyr::summarize()`. Defined globally to allow flexibility and reduce redundancy if changing its assignment.
+#'
+#' @return A ggplot2 bar plot showing the count of the specified category across groups.
+#' @export
+#'
+#' @examples
+#' 
+
+summarize_category_count <- function(data, group_var, cat_var, cat, na.rm = TRUE, .groups = "drop") {
+  
+  # To capture the names of the variables for easier use in the plot: 
+  group_var_name <- deparse(substitute(group_var)) 
+  cat_var_name <- deparse(substitute(cat_var))
+
+  cat_var_data <- data[[cat_var_name]] # Accessing variable from the data
+  
+  # To ensure that the input variables are part of the dataset:  
+  if (!(group_var_name %in% names(data))) {
+    stop(paste("Error: The grouping variable", group_var_name, "is not a column in the dataset.")) 
+  }
+  
+  if (!(cat_var_name %in% names(data))) {
+    stop(paste("Error: The category variable", cat_var_name, "is not a column in the dataset."))
+  }
+
+  # To ensure that the category variable is only a factor or integer numeric type:
+  if (!is.factor(cat_var_data) && 
+      !(is.numeric(cat_var_data) && 
+        all(cat_var_data == as.integer(cat_var_data), na.rm = na.rm))) {
+    stop("Sorry, this function only works for factor or discrete numeric (integer) variables. You have provided an object of class: ", 
+         class(cat_var_data)[1], ", or a non-integer numeric type.") 
+  }
+    
+  # To group by the specified variable and count instances of the category: 
+  summary_data <- data %>% 
+    group_by({{group_var}}) %>% 
+    summarize(count = sum({{cat_var}} == cat, na.rm = na.rm), .groups = .groups)
+    
+  print(summary_data) # To print a summary result table. 
+  
+}
+
+```
+
+# Exercise 3: Include examples
+
+### Examples with `lung` data: 
+
+To use an example with a data set containing a categorical variable with discrete numbers as categories, we can use the `lung` dataset from the `survival` package.
+
+``` {r}
+#To explore the `lung` dataframe variables and its documentation: 
+glimpse(lung)
+?lung
+```
+
+``` {r}
+#To see a preview of the `lung` data:
+head(lung)
+
+```
+
+
+**Example 1:** An example that counts the instances of an ECOG performance rating (`ph.ecog`) by the sex group variable (`sex`). 
+
+For the group variable, `sex` is either 1 (Male) or 2 (Female).
+For the category variable input, the possible `ph.ecog` categories are the following: 0=asymptomatic, 1= symptomatic but completely ambulatory, 2= in bed <50% of the day, 3= in bed > 50% of the day but not bedbound, 4 = bedbound. As seen in `?lung` and `glimpse()` above, the categorical variable (`ph.ecog`) is an integer numeric (`dbl`subtype) class, where each number corresponds to a rating category. 
+``` {r}
+# Example that counts the instances of ECOG rating category '0' (asymptomatic) by sex: 
+summarize_category_count(data = lung, group_var = sex, cat_var = ph.ecog, cat = 0) 
+```
+
+**Example 2:** An example that counts the instances of a censoring status category (`status`) by the sex group variable (`sex`). 
+
+For the group variable, `sex` is either 1 (Male) or 2 (Female).
+For the category variable input, the `status` can be 1 (censored) or 2(dead). As seen in `?lung` and `glimpse()` above, the categorical variable (`status`) is an integer numeric (`dbl`subtype) class, where each number corresponds to a status category. 
+``` {r}
+# Example that counts the instances of status category '1' (censored) by sex: 
+summarize_category_count(data = lung, group_var = sex, cat_var = status, cat = 2) 
+
+```
+
+
+### Example with `mtcars` data: 
+
+To create examples using another dataset, we can use the `mtcars` dataframe.
+
+``` {r}
+#To explore the `mtcars` dataframe variables and its documentation: 
+glimpse(mtcars)
+?mtcars
+```
+
+``` {r}
+#To see a preview of the `lung` data:
+head(mtcars)
+
+```
+
+**Example 3:** An example that counts the instances of an engine type category (`vs`) by the transmission group variable (`am`). 
+
+For the group variable, transmission (`am`) is either 0 (automatic) or 2 (manual).
+For the categorical variable, the engine type (`vs`) can either be 0 (V-shaped) or 1 (straight).  As seen in `?mtcars` and `glimpse()` above, the categorical variable (`vs`) is an integer numeric (`dbl`subtype) class, where each number corresponds to a status category.
+
+``` {r}
+# Example that counts the instances of engine category '1' (straight) by transmission type:
+summarize_category_count(data = mtcars, group_var = am, cat_var = vs, cat = 1)  
+```
+
+### Example with `penguins` data: 
+
+Another dataset we can use is the `mtcars` dataframe.
+
+``` {r}
+#To explore the `penguins` dataframe variables and its documentation: 
+glimpse(penguins)
+?penguins
+```
+
+``` {r}
+#To see a preview of the `penguins` data:
+head(penguins)
+
+```
+
+**Example 4:** An example that counts the instances of an species type category (`species`) by the sex group variable (`sex`). 
+
+For the group variable, sex (`sex`) is either female or male.
+For the categorical variable, the species (`species`) can either be Adélie, Chinstrap and Gentoo. As seen in `?penguins` and `glimpse()` above, the categorical variable (`species`) is factor type, with different levels as categories.
+
+``` {r}
+# Example using factor as the categorical variable, counting the instances of the species category "Gentoo" by sex: 
+summarize_category_count(data = penguins, group_var = sex, cat_var = species, cat = "Gentoo")
+
+```
+
+
+# Exercise 4: Test the Function
+
+For the test for handling NA values in the data, here is a synthesized tibble to be used later on: 
+``` {r}
+modified_lung <- tibble(
+  status = c(1, 2, 1, 2, 1, 2, 1, 2, NA, 1),  # Status (1 = alive, 2 = dead)
+  age = c(71, 68, 65, 74, 58, 62, 77, 60, 55, 80),  # Age in years
+  sex = c(1, 2, 1, 2, 1, 2, 1, NA, 1, 2),  # Sex (1 = male, 2 = female)
+  ph.ecog = c(1, 2, NA, 0, 1, 3, 2, 0, NA, 4)  # ECOG performance scores
+)
+
+```
+
+``` {r}
+test_that("Testing category summarization function", {
+  # Test for the lung dataset with expected category count
+  expect_equal(
+    summarize_category_count(data = penguins, group_var = sex, cat_var = species, cat = "Gentoo"), 
+    penguins %>%
+      group_by(sex) %>%
+      summarize(count = sum(species == "Gentoo", na.rm = TRUE), .groups = "drop")
+  )
+  
+  # Test for the starwars dataset expecting an error for the wrong input type (decimal instead of integer):
+ expect_error(
+        summarize_category_count(data = starwars, group_var = sex, cat_var = birth_year, cat = 41.9), 
+        regexp = "Sorry, this function only works for factor or discrete numeric \\(integer\\) variables\\. You have provided an object of class: numeric, or a non-integer numeric type."
+    )
+ 
+  # Expects the count to match the summarized data while handling NA values
+  expect_equal(
+    summarize_category_count(data = modified_lung, group_var = sex, cat_var = ph.ecog, cat = 1, na.rm = TRUE), 
+    modified_lung %>%
+      group_by(sex) %>%
+      summarize(count = sum(ph.ecog == 1, na.rm = TRUE), .groups = "drop")
+  ) 
+  
+  # Expects an error when an input category name is not a column in the data set:
+  expect_error(
+    summarize_category_count(data = mtcars, group_var = transmission, cat_var = vs, cat = 1),
+    regexp = paste("Error: The grouping variable", "transmission", "is not a column in the dataset."))
+})
+
+
+
+```
+
+
+
+
