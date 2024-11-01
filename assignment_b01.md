@@ -50,11 +50,15 @@ library(palmerpenguins)
 
 # Exercise 1: Make a Function and Exercise 2: Document your Function
 
+The following is the code for my created function
+`summarize_category_count()`, with `roxygen2` tags for function
+documentation.
+
 *Extra coding explanations:* `deparse(substitute())` was used to convert
 variable name into character string for verifying data class.
 
 ``` r
-#' Title: Summarize Category Instances
+#' Title: Function for Summarizing Category Instances (summarize_category_count())
 #' This function counts instances of a specific category within a categorical variable, grouped by a group variable. It supports both factor and discrete numeric variable types, and displays the results in a summary table. 
 #' 
 #' @param data An input data frame containing the variables to analyze.
@@ -64,7 +68,7 @@ variable name into character string for verifying data class.
 #' @param na.rm A reusable variable indicating whether to ignore NA values in the data. Defined globally to allow flexibility in handling missing values, while reducing redundancy.
 #' @param .groups A reusable variable to control the behavior of grouping (e.g., "drop"), as in `dplyr::summarize()`. Defined globally to allow flexibility and reduce redundancy if changing its assignment.
 #'
-#' @return A ggplot2 bar plot showing the count of the specified category across groups.
+#' @return A summary table with the counts for the chosen category per group.
 #' @export
 #'
 #' @examples
@@ -327,6 +331,8 @@ modified_lung <- tibble(
 )
 ```
 
+The following are test cases to validate the behaviour of the function.
+
 ``` r
 test_that("Testing category summarization function", {
   # Test for the lung dataset with expected category count
@@ -370,4 +376,4 @@ test_that("Testing category summarization function", {
     ## 1     1     2
     ## 2     2     0
     ## 3    NA     0
-    ## Test passed 🎉
+    ## Test passed 🥳
