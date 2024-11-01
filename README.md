@@ -8,7 +8,7 @@ This repository contains the work for Assignment B-1 of STAT 545, where we devel
 - **Function Code:** An R function created for data manipulation or analysis.
 - **Documentation:** Full roxygen2 documentation for the function, including parameter descriptions, return values, and usage notes.
 - **Examples:** Demonstrative use cases of the function.
-- **Testing:** Formal tests using `testthat` to validate the function’s behavior across multiple input types.
+- **Testing:** Formal tests using `testthat` to validate the function’s behavior across various different inputs.
 
 ## Repository Files
 - **STAT 545B Assignment B1 - Andrea Wong Koo.Rproj**
